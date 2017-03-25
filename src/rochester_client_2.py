@@ -448,11 +448,12 @@ class RochesterController(Controller):
         return acts
 
 class RochesterClientFactory(ClientFactory):
-    def __init__(self, debug, heuristic="diagonal"):
+    def __init__(self, debug, heuristic="combine"):
         self.debug = debug
         self.heuristic = heuristic
         # TODO: CHANGE BEFORE SUBMITTING
         self.name =  "Canadian Immigrants"+self.heuristic
+        self.setWeights([3,3, 3,8,3])
 
     def buildProtocol(self, addr):
         return RochesterClient(self.name, self.debug, heuristic=self.heuristic)
