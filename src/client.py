@@ -74,7 +74,7 @@ class HockeyClient(LineReceiver, object):
         self.Y += s2d[1]
         
         if sp[-3] == 'power' or sp[-4] == 'power':
-            pass
+            self.powerupUsed = True
 
         if not self.powerupCaptured:
             if self.X == self.powerX and self.Y == self.powerY:

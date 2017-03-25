@@ -120,14 +120,7 @@ class RochesterClient(HockeyClient):
         self.debugcounter = 0
 
     def parse_didgo(self, line):
-        sp = line.split(" ")
-        if sp[-4] == 'north' or sp[-4] == 'south':
-            news = sp[-4] + " " + sp[-3]
-        else:
-            news = sp[-3]
-        s2d = string_to_diff[news]
-        self.X += s2d[0]
-        self.Y += s2d[1]
+        super().parse_didgo(self, line)
         self.apply_move(news)
 
     def apply_move(self, action):
