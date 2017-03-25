@@ -65,7 +65,7 @@ class ClientFactory(protocol.ClientFactory):
         reactor.stop()
 
 
-name = "Canadian Immigrants"
+name = "Bob{}".format(random.randint(0, 999))
 
 f = ClientFactory(name, debug=True)
 reactor.connectTCP("localhost", 8023, f)
