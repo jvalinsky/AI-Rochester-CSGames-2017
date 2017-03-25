@@ -241,6 +241,9 @@ class RochesterController(Controller):
         self.terminated = False
         self.printer = printer()
 
+        self.powerUsed = False
+        self.hasPower = None
+
         next_rule = self.rule()
 
         self.rule_chain = next_rule
