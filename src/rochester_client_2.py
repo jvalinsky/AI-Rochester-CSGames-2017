@@ -24,6 +24,8 @@ string_to_diff = {
         'north west': (-1, -1),
 }
 
+
+
 def obj_equals(a, b):
     if not a and not b:
         return True
@@ -152,6 +154,17 @@ class RochesterClient(HockeyClient):
         self.havePowerup = False
         self.powerupCaptured = False
         self.heuristicType = heuristic
+        self.heuristic_to_range = {
+                'eculidean': 10,
+                'manhattan': 22,
+                'possible_actions': 128,
+        }
+
+        self.heuristic_to_function = {
+            'eculidean': self.eculidean_heuristic,
+            'manhattan': self.manhattan_heuristic,
+            'possible_actions': self.possible_actions_heuristic,
+        }
 
         self.debugcounter = 0
 
@@ -292,7 +305,16 @@ class RochesterClient(HockeyClient):
             x = posX
             y = posY
 
-        return num_actions
+        return num_actions if self.us == self.controller.active_player else -num_actions
+
+
+    def combine_heuristics(self, heuristics, weights):
+        value = 0
+        for h, w in zip(heuristics, weights):
+            value += (self.heuristic_to_function[h](self)/self.heuristic_to_range[h]) * w
+
+        return value
+
 
 
 
