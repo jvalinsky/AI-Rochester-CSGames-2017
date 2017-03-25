@@ -116,12 +116,17 @@ class RochesterClient(HockeyClient):
         self.dots[self.ball[0]][self.ball[1]]['bounce'] = True
         self.controller = RochesterController()
         self.depth = 1
+        self.powerX = -1
+        self.powerY = -1
+        self.powerupUsed = False
+        self.havePowerup = False
+        self.powerupCaptured = False
 
         self.debugcounter = 0
 
     def parse_didgo(self, line):
-        super().parse_didgo(self, line)
-        self.apply_move(news)
+        super(RochesterClient, self).parse_didgo(line)
+        self.apply_move(self.news)
 
     def apply_move(self, action):
         move = self.controller.move(action)

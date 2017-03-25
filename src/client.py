@@ -72,6 +72,8 @@ class HockeyClient(LineReceiver, object):
         s2d = string_to_diff[news]
         self.X += s2d[0]
         self.Y += s2d[1]
+
+        self.news = news
         
         if sp[-3] == 'power' or sp[-4] == 'power':
             self.powerupUsed = True
