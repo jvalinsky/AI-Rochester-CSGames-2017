@@ -115,7 +115,7 @@ class RochesterClient(HockeyClient):
         self.dots = BoardBuilder.init(self.size_x, self.size_y)
         self.dots[self.ball[0]][self.ball[1]]['bounce'] = True
         self.controller = RochesterController()
-        self.depth = 1
+        self.depth = 2
 
         self.debugcounter = 0
 
@@ -214,8 +214,9 @@ class RochesterClient(HockeyClient):
                 return 100000
             else:
                 return -100000
-        # stub
-        return random.randint(-10, 10)
+        # compute manhattan distance
+        dist = abs(self.controller.ball[0] - self.goal) + abs(self.controller.ball[1] - 5)
+        return 5 - dist
 
 
 
