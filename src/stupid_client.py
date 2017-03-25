@@ -83,7 +83,7 @@ class StupidClient(HockeyClient):
 
 class StupidClientFactory(ClientFactory):
     def __init__(self, debug):
-        self.name =  "Canadian Immigrants"
+        self.name =  "Canadian Immigrants2"
         self.debug = debug
 
     def buildProtocol(self, addr):
