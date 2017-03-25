@@ -344,7 +344,7 @@ class RochesterClient(HockeyClient):
         if  len(self.heuristic_to_range.keys()) != len(self.weights):
             return value
         for h, w in zip(self.heuristic_to_range.keys(), self.weights):
-            if (self.heuristic_to_range[n] is None or self.heuristic_to_function[h] is None):
+            if (self.heuristic_to_range[h] is None or self.heuristic_to_function[h] is None):
                 continue
             value += (self.heuristic_to_function[h](self)/self.heuristic_to_range[h]) * w
 
@@ -448,7 +448,7 @@ class RochesterController(Controller):
         return acts
 
 class RochesterClientFactory(ClientFactory):
-    def __init__(self, debug, heuristic="combine"):
+    def __init__(self, debug, heuristic="combined"):
         self.debug = debug
         self.heuristic = heuristic
         # TODO: CHANGE BEFORE SUBMITTING
