@@ -31,6 +31,11 @@ class HockeyClient(LineReceiver, object):
             nums = re.findall(r'\d+', line)
             self.X = int(nums[0])
             self.Y = int(nums[1])
+        elif 'your goal is' in line:
+            if 'north' in line:
+                self.goal = -1
+            else:
+                self.goal = 11
 
     def play_game(self):
         result = move(self)
