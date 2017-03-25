@@ -166,6 +166,8 @@ class RochesterClient(HockeyClient):
             'possible_actions': self.possible_actions_heuristic,
         }
 
+        self.weights = [0 for x in range(len(self.heuristic_to_range.keys())]
+
         self.lastMove = None
         self.lastMoveInvalid = False
         self.triedPower = False
@@ -286,6 +288,8 @@ class RochesterClient(HockeyClient):
             return self.diagonal_heuristic()
         elif self.heuristicType == "powerup":
             return self.powerup_heuristic()
+        elif self.heuristicType == "combine":
+            return self.combine_heuristics()
         else:
             print('NO HEURISTIC...')
             return 0
@@ -325,20 +329,23 @@ class RochesterClient(HockeyClient):
         return num_actions if self.us == self.controller.active_player else -num_actions
 
 
-    def combine_heuristics(self, heuristics, weights):
+    def powerup_heuristic(self):
+        dist = abs(self.controller.ball[0] - self.controller.power_up_position[0]) + abs(self.controller.ball[1] - self.controller.power_up_position[1])
+        return 7 - dist
+
+    def combine_heuristics(self):
         value = 0
-        for h, w in zip(heuristics, weights):
+        if  len(self.heuristic_to_range.keys()) != len(self.weights):
+            return value
+        for h, w in zip(self.heuristic_to_range.keys(), self.weights):
             if (self.heuristic_to_range[n] is None or self.heuristic_to_function[h] is None):
                 continue
             value += (self.heuristic_to_function[h](self)/self.heuristic_to_range[h]) * w
 
         return value
 
-
-    def powerup_heuristic(self):
-        dist = abs(self.controller.ball[0] - self.controller.power_up_position[0]) + abs(self.controller.ball[1] - self.controller.power_up_position[1])
-        return 7 - dist
-
+    def setWeights(self, weights):
+        self.weights = weights
 
 
 
