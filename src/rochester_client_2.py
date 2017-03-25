@@ -74,7 +74,7 @@ class UndoLegalMove(RuleEnforcer):
         self.next_rule = next_rule
 
     def apply_rule(self, action):
-        #print('undoing things', action, self.controller.actions, self.controller.active_player)
+        print('undoing things', action)
         assert action == self.controller.actions[-1][2]
         saved_action = self.controller.actions[-1]
         del self.controller.actions[-1]
@@ -153,6 +153,10 @@ class RochesterClient(HockeyClient):
         self.powerupCaptured = False
         self.heuristicType = heuristic
 
+        self.lastMove = None
+        self.lastMoveInvalid = False
+        self.triedPower = False
+
         self.debugcounter = 0
 
     def parse_didgo(self, line):
@@ -178,6 +182,11 @@ class RochesterClient(HockeyClient):
         if self.us != self.controller.active_player:
             print('NOT ACTIVE PLAYER... STATE MAY HAVE BEEN CORRUPTED')
             self.controller.active_player = self.us
+        # check for invalid
+        if self.lastMoveInvalid and self.triedPower:
+            self.triedPower = False
+            print('last invalid', self.lastMove)
+            return self.lastMove
         # iterative deepening 
         olddots = copy.deepcopy(self.dots)
         #print(json.dumps(olddots))
@@ -188,7 +197,14 @@ class RochesterClient(HockeyClient):
         #print('consistency check', self.controller.ball, self.X, self.Y)
         assert self.controller.ball[0] == self.X
         assert self.controller.ball[1] == self.Y
-        return best_move
+        self.lastMove = best_move
+        self.triedPower = True
+        if self.lastMoveInvalid:
+            # trouble
+            print('STATE MIGHT BE CORRUPTED')
+            return Action.from_number(random.randint(0, 7))
+        print('moving power ' + best_move)
+        return "power " + best_move
         #return Action.from_number(0)
 
     def iterative_deepening(self):
@@ -255,6 +271,8 @@ class RochesterClient(HockeyClient):
             return self.manhattan_heuristic()
         elif self.heuristicType == "diagonal":
             return self.diagonal_heuristic()
+        elif self.heuristicType == "powerup":
+            return self.powerup_heuristic()
         else:
             print('NO HEURISTIC...')
             return 0
@@ -293,6 +311,10 @@ class RochesterClient(HockeyClient):
             y = posY
 
         return num_actions
+
+    def powerup_heuristic(self):
+        dist = abs(self.controller.ball[0] - self.controller.power_up_position[0]) + abs(self.controller.ball[1] - self.controller.power_up_position[1])
+        return 7 - dist
 
 
 
