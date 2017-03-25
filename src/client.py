@@ -53,7 +53,7 @@ class HockeyClient(LineReceiver, object):
         elif 'power up is at' in line:
             self.powerX = int(line.split(' ')[-4][1:-1])
             self.powerY = int(line.split(' ')[-3][0:-1])
-        elif 'polarity' in line:
+        elif 'polarity of the goal has been inverted' in line:
             self.goal = 15 if self.goal == -1 else -1
         elif 'did go' in line:
             self.parse_didgo(line)
