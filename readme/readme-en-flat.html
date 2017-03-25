@@ -1,0 +1,162 @@
+<p>Welcome to Silicon Valley.</p>
+<p>Here, chess is obsolete; therefore, people started playing a new kind of 1 vs 1 game...</p>
+<p>It's called paper hockey.</p>
+<hr />
+<h1 id="paper-hockey">Paper Hockey</h1>
+<p>Paper Hockey is a turn-based game played on a <code>11x11</code> grid.</p>
+<p>The game starts with a puck at the center of the grid, and the goal of the game is to take the puck into your opponent's net.</p>
+<p>Goals are at the north and south boundaries of the grid (see the picture below).</p>
+<p><img src="images/empty_board.png" width="300"></p>
+<hr />
+<h2 id="rules">Rules:</h2>
+<ul>
+<li>Each turn, a player can throw the puck in one of 8 directions (N, S, W, E and diagonals)</li>
+<li>The puck can't travel twice on the same segment - once the ice is crushed you can't go back.</li>
+<li>Shooting the puck into a visited node or a wall results in a bounce, which allows the active player to make another move.</li>
+<li>You have at most 2 seconds to send your move. Timing out means losing the game.</li>
+<li>A game is won by scoring a goal or forcing the other player into checkmate (see <code>Checkmate</code> section).</li>
+</ul>
+<hr />
+<h2 id="goal-example">Goal example</h2>
+<ol>
+<li>Player 1 (green) moves north (towards his goal):</li>
+</ol>
+<p><img src="images/one.png" width="300" alt="Green north"/></p>
+<hr />
+<ol>
+<li>Player 2 (red) moves north east (a dumb move):</li>
+</ol>
+<p><img src="images/two.png" width="300" alt="Green north, Red north east"/></p>
+<hr />
+<ol>
+<li>Player 1 (green) moves north.</li>
+<li>Player 2 (red) moves north west.</li>
+<li>Player 1 (green) moves north west, hitting a wall, resulting in a <strong>bounce</strong>.</li>
+<li>Player 1 (green) moves north east, scoring a <strong>goal</strong> and winning the game.</li>
+</ol>
+<p><img src="images/won.png" width="300" alt="Green north, Red north east, Green north, Red north west, Green north west, Green north east"></p>
+<p>Here is the replay of the game:</p>
+<ul>
+<li>P1 - north</li>
+<li>P2 - north east</li>
+<li>P1 - north</li>
+<li>P2 - north west</li>
+<li>P1 - north west [bounce]</li>
+<li>P1 - north east</li>
+</ul>
+<hr />
+<h2 id="epic-bouncing-example">Epic bouncing example</h2>
+<p>Imagine the following players drawing a pine by moving the puck around:</p>
+<p><img src="images/pine.gif" width="300"/></p>
+<hr />
+<p>Player 2 now has the opportunity to end the game in a single turn by bouncing against visited nodes and the wall:</p>
+<p><img src="images/pine_wild.gif" width="300"/></p>
+<p>One could only wish the Montreal Canadiens had this kind of offensive skills!</p>
+<hr />
+<h2 id="checkmate-example">Checkmate example</h2>
+<p>In this game, player one just moved into a wall and has to play again (bouncing). Because all the segments out of the current node are crushed, player one cannot issue a valid move and loses by checkmate.</p>
+<p><img src="images/check.gif" width="300" alt="Green north west, Red north west, Green north west, Red north west, Green north west"/></p>
+<hr />
+<p>This is another checkmate example where player one loses.</p>
+<p><img src="images/checkmate.gif" width="300"/></p>
+<hr />
+<h2 id="setup">Setup</h2>
+<p><i>Requirements: Python &amp; tox</i></p>
+<h3 id="install">Install</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">tox</span> -e py3
+<span class="bu">source</span> .tox/py3/bin/activate</code></pre></div>
+<p>or</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pip</span> install -r requirements.txt</code></pre></div>
+<hr />
+<h3 id="starting-the-server">Starting the server</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">python</span> src/server.py</code></pre></div>
+<h3 id="starting-a-dummy-ai">Starting a dummy AI</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">source</span> .tox/py3/bin/activate
+<span class="ex">python</span> src/client.py</code></pre></div>
+<hr />
+<h2 id="getting-started">Getting started</h2>
+<p>To play the game, you must connect to localhost:8023.<br />
+The protocol is text-based - you can even play from telnet!</p>
+<p>Once connected, the first thing you'll receive is:</p>
+<pre><code>What&#39;s your name?</code></pre>
+<p>You should reply with your team name, and receive this confirmation:</p>
+<pre><code>Welcome, Bob you&#39;re player 0!</code></pre>
+<hr />
+<p>Once both players have entered their name, they will receive information about the game:</p>
+<ul>
+<li>position of the ball</li>
+<li>where is your goal</li>
+<li><p>{player_name} is active player [only if it's your turn]</p>
+<pre><code>Game is on - 1
+ball is at (5, 5) - 3
+your goal is north - 5
+Bob is active player - 7</code></pre></li>
+</ul>
+<hr />
+<h3 id="moves">Moves</h3>
+<p>When you're the active player, you can send one of the following moves:</p>
+<pre><code>north
+north east
+east
+south east
+south
+south west
+west
+north west</code></pre>
+<hr />
+<p>Once a valid move is issued, Player 1 (aka Bob) will receive:</p>
+<pre><code>south
+Bob did go south - 9</code></pre>
+<p>and P2 (aka Malory) will receive:</p>
+<pre><code>Bob did go south - 8
+Malory is active player - 10</code></pre>
+<hr />
+<h3 id="bouncing">Bouncing</h3>
+<p>Bouncing player will be informed by the statement &quot;{player_name} is active player&quot;:</p>
+<pre><code>Bob did go north west - 15
+Malory is active player - 17
+east
+Malory did go east - 18
+Malory is active player - 20
+east
+Malory did go east - 22</code></pre>
+<hr />
+<h3 id="invalid-move">Invalid move</h3>
+<p>If Malory tries to go north now, she'll receive &quot;invalid move&quot;.</p>
+<p>Bob won't be notified of invalid moves.</p>
+<pre><code>Bob did go south - 8
+Malory is active player - 10
+invalid move - 11</code></pre>
+<hr />
+<p>If you send an action when it's not your turn, you'll receive:</p>
+<pre><code>ignoring action south - 20</code></pre>
+<hr />
+<h3 id="winning-the-game">Winning the game</h3>
+<p>Here is the output when a player wins the game:</p>
+<pre><code>Malory won a goal was made - 34</code></pre>
+<h3 id="game-replay">Game replay</h3>
+<p>You can see the replay of your games in the folder <i>test/output/</i>.</p>
+<hr />
+<h2 id="evaluation">Evaluation</h2>
+<ul>
+<li>Each AI will play up to 50000 games (or 10 minutes) against every team.</li>
+<li>You provide source code and an executable package. Make sure you explicitly declare all your dependencies.</li>
+<li>Your AI won't have access to the internet - sorry DeepMind.</li>
+<li>Please make sure your code work on ubuntu 16.04 with official packages</li>
+<li>10% of the score is given if you provide a bash script &quot;run.sh&quot; that start your AI.</li>
+<li>90% of the score is given by your ranking of the round robin.</li>
+</ul>
+<hr />
+<h3 id="scoring-detailed">Scoring detailed</h3>
+<p>score = (team_count-position)/(team_count-1)</p>
+<p>Example if there are 30 teams</p>
+<ul>
+<li>position == score</li>
+<li>1 == 90% maximum score</li>
+<li>2 == 87%</li>
+<li>3 == 84%</li>
+<li>4 == 81%</li>
+<li>5 == 78%</li>
+<li>6 == 74%</li>
+<li>7 == 71%</li>
+</ul>

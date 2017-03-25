@@ -1,4 +1,4 @@
 #!/bin/bash
 
-python src/client.py
+python src/stupid_ai.py
 

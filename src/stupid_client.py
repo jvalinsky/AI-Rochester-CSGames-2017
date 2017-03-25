@@ -7,6 +7,9 @@ from twisted.protocols.basic import LineReceiver
 from hockey.action import Action
 
 from client import HockeyClient, ClientFactory
+import random
+import re
+
 
 class StupidClient(HockeyClient):
 
@@ -16,11 +19,9 @@ class StupidClient(HockeyClient):
             print('Server said:', line)
         if '{} is active player'.format(self.name) in line:
             if not ( 'invalid move' in line):
-                self.invalid = False
                 self.play_game()
             else:
-                self.invalid = True
-                self.play_game()
+                self.play_random()
         elif 'ball is at' in line:
             nums = re.findall(r'\d+', line)
             self.X = int(nums[0])
@@ -30,30 +31,36 @@ class StupidClient(HockeyClient):
                 self.goal = -1
             else:
                 self.goal = 11
+
+    def move_random(self):
+         return Action.from_number(random.randint(0, 7))
+
+    def play_random(self):
+        result = self.move_random()
+        self.sendLine(result)
+
     def move(self):
-        if self.invalid:
-            return Action.from_number(random.randint(0, 7))
         if self.goal == -1:
-            if self.X < 0 and self.Y > 0:
+            if self.X < 5 and self.Y > 0:
                 return "north east"
-            if self.Y == 0 and self.X < 0:
+            if self.Y == 0 and self.X < 5:
                 return "south east"
-            if self.Y == 0 and self.X > 0:
+            if self.Y == 0 and self.X > 5:
                 return "south west"
-            if self.Y > 0 and self.X > 0:
+            if self.Y > 0 and self.X > 5:
                 return "north west"
-            if self.X == 0:
+            if self.X == 5:
                 return "north"
         else:
-            if self.X < 0 and self.Y < 10:
+            if self.X < 5 and self.Y < 10:
                 return "south east"
-            if self.Y == 10 and self.X < 0:
+            if self.Y == 10 and self.X < 5:
                 return "north east"
-            if self.Y == 10 and self.X > 0:
+            if self.Y == 10 and self.X > 5:
                 return "north west"
-            if self.Y < 10 and self.X > 0:
+            if self.Y < 10 and self.X > 5:
                 return "south west"
-            if self.X == 0:
+            if self.X == 5:
                 return "south"
 
         return "south"
