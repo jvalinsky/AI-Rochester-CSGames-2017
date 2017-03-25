@@ -12,6 +12,11 @@ import re
 
 
 class StupidClient(HockeyClient):
+    def __init__(self, name, debug):
+        self.name = name
+        self.debug = debug
+        self.X = 5
+        self.Y = 5
 
     def lineReceived(self, line):
         line = line.decode('UTF-8')
@@ -25,6 +30,19 @@ class StupidClient(HockeyClient):
             nums = re.findall(r'\d+', line)
             self.X = int(nums[0])
             self.Y = int(nums[1])
+        elif 'did go' in line:
+            d1 = line.split(' ')[-4]
+            d2 = line.split(' ')[-3]
+            if d1 == 'north' or d2 == 'north':
+                self.Y -= 1
+            if d1 == 'south' or d2 == 'south':
+                self.Y += 1
+            if d2 == 'east':
+                self.X += 1
+            if d2 == 'west':
+                self.X -= 1
+
+
         elif 'your goal is' in line:
             if 'north' in line:
                 self.goal = -1
@@ -62,7 +80,6 @@ class StupidClient(HockeyClient):
             if self.X == 5:
                 return "south"
 
-        return "south"
 
 class StupidClientFactory(ClientFactory):
     def __init__(self, debug):
