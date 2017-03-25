@@ -18,10 +18,9 @@ class StupidClient(HockeyClient):
         if self.debug:
             print('Server said:', line)
         if '{} is active player'.format(self.name) in line:
-            if not ( 'invalid move' in line):
-                self.play_game()
-            else:
-                self.play_random()
+            self.play_game()
+        elif 'invalid move' in line:
+            self.play_random()
         elif 'ball is at' in line:
             nums = re.findall(r'\d+', line)
             self.X = int(nums[0])
