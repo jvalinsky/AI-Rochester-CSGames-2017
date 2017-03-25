@@ -10,7 +10,30 @@ from client import HockeyClient, ClientFactory
 
 class StupidClient(HockeyClient):
     def move(self):
-        return Action.from_number(random.randint(0, 7))
+        if self.goal == -1:
+            if self.X < 0 and self.Y < 0:
+                return Action.to_number("north east")
+            if self.Y == 0 and self.X < 0:
+                return Action.to_number("south east")
+            if self.Y == 0 and self.X > 0:
+                return Action.to_number("south west")
+            if self.Y > 0 and self.X > 0:
+                return Action.to_number("north west")
+            if self.X == 0:
+                return Action.to_number("north")
+        else:
+            if self.X < 0 and self.Y < 10:
+                return Action.to_number("south east")
+            if self.Y == 10 and self.X < 0:
+                return Action.to_number("north east")
+            if self.Y == 10 and self.X > 0:
+                return Action.to_number("north west")
+            if self.Y > 10 and self.X > 0:
+                return Action.to_number("south west")
+            if self.X == 0:
+                return Action.to_number("south")
+
+        return Action.to_number("south")
 
 class StupidClientFactory(ClientFactory):
     def __init__(self, debug):
