@@ -452,8 +452,8 @@ class RochesterClientFactory(ClientFactory):
         self.debug = debug
         self.heuristic = heuristic
         # TODO: CHANGE BEFORE SUBMITTING
-        self.name =  "Canadian Immigrants"+self.heuristic
         self.setWeights([3,3, 3,8,3])
+        self.name =  "polarity invalid move you\'re player 2 ball is at did go west power "+self.heuristic
 
     def buildProtocol(self, addr):
         return RochesterClient(self.name, self.debug, heuristic=self.heuristic)

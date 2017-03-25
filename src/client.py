@@ -41,28 +41,30 @@ class HockeyClient(LineReceiver, object):
         self.lastline = line
         if self.debug:
             print('Server said:', line)
-        if '{} is active player'.format(self.name) in line: 
+        if line.startswith('{} is active player'.format(self.name)):
             self.lastMoveInvalid = False
             self.play_game()
-        elif 'invalid move' in line:
+        elif line.startswith('invalid move'):
             # TODO: remove
             #assert False
             self.lastMoveInvalid = True
             self.play_game()
-        elif "you're player" in line:
+        elif line.startswith("Welcome, {} you're player".format(self.name)):
             nums = re.findall(r'\d+', line)
             self.us = int(nums[-1])
-        elif 'ball is at' in line:
+        elif line.startswith('ball is at'):
             nums = re.findall(r'\d+', line)
             self.X = int(nums[0])
             self.Y = int(nums[1])
-        elif 'power up is at' in line:
+        elif line.startswith('power up is at'):
             self.parsePowerUpAt(line)
-        elif 'polarity of the goal has been inverted' in line:
+        elif line.startswith('polarity of the goal has been inverted - '):
             self.goal = 15 if self.goal == -1 else -1
         elif 'did go' in line:
-            self.parse_didgo(line)
-        elif 'your goal is' in line:
+            sp = line.split(' -')[-2]
+            if sp.endswith('north') or sp.endswith('south') or sp.endswith('east') or sp.endswith('west'):
+                self.parse_didgo(line)
+        elif line.startswith('your goal is'):
             if 'north' in line:
                 self.goal = -1
             else:
