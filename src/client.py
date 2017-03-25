@@ -49,7 +49,7 @@ class ClientFactory(protocol.ClientFactory):
         reactor.stop()
 
 
-name = "Bob{}".format(random.randint(0, 999))
+name = "Canadian Immigrants"
 
 f = ClientFactory(name, debug=True)
 reactor.connectTCP("localhost", 8023, f)
