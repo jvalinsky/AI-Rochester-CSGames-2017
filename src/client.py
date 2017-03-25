@@ -1,4 +1,5 @@
 import random
+import re
 
 from twisted.internet import protocol
 from twisted.internet import reactor
@@ -11,6 +12,8 @@ class HockeyClient(LineReceiver, object):
     def __init__(self, name, debug):
         self.name = name
         self.debug = debug
+        self.X = 5
+        self.Y = 5
 
     def connectionMade(self):
         self.sendLine(self.name)
@@ -24,10 +27,18 @@ class HockeyClient(LineReceiver, object):
             print('Server said:', line)
         if '{} is active player'.format(self.name) in line or 'invalid move' in line:
             self.play_game()
+        elif 'ball is at' in line:
+            nums = re.findall(r'\d+', line)
+            self.X = int(nums[0])
+            self.Y = int(nums[1])
 
     def play_game(self):
-        result = Action.from_number(random.randint(0, 7))
+        result = move(self)
         self.sendLine(result)
+
+    def move(self):
+        return Action.from_number(random.randint(0, 7))
+
 
 
 class ClientFactory(protocol.ClientFactory):
