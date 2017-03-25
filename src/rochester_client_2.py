@@ -1,6 +1,7 @@
 import random
 import sys
 import json
+import math
 
 from twisted.internet import protocol
 from twisted.internet import reactor
@@ -263,6 +264,30 @@ class RochesterClient(HockeyClient):
         m = max(diff1, diff2)
         d = abs(diff1 - diff2)
         return m + d
+
+    def eculidean_heuristic(self):
+        posX = self.controller.ball[0]
+        posY = self.controller.ball[1]
+
+        return math.sqrt(abs(posX - 7) * abs(posX - 7) + abs(posY - self.goal)*abs(posY - self.goal))
+
+
+
+    def possible_actions_heuristic(self):
+        posX = self.controller.ball[0]
+        posY = self.controller.ball[1]
+        x = posX
+        y = posY
+        num_actions = 0
+        actions = self.controller.get_possible_actions(self, posX, posY)
+        for action in actions:
+            x += string_to_diff[action]
+            y += string_to_diff[action]
+            num_actions += self.controller.get_possible_actions(self, x, y).length
+            x = posX
+            y = posY
+
+        return num_actions
 
 
 
