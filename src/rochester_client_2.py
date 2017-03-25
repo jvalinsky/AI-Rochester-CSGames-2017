@@ -204,7 +204,7 @@ class RochesterClient(HockeyClient):
         # check for invalid
         if self.lastMoveInvalid and self.triedPower:
             self.triedPower = False
-            print('last invalid', self.lastMove)
+            #print('last invalid', self.lastMove)
             return self.lastMove
         # iterative deepening 
         olddots = copy.deepcopy(self.dots)
@@ -222,7 +222,7 @@ class RochesterClient(HockeyClient):
             # trouble
             print('STATE MIGHT BE CORRUPTED')
             return Action.from_number(random.randint(0, 7))
-        print('moving power ' + best_move)
+        #print('moving power ' + best_move)
         return "power " + best_move
         #return Action.from_number(0)
 
@@ -452,7 +452,7 @@ class RochesterClientFactory(ClientFactory):
         self.debug = debug
         self.heuristic = heuristic
         # TODO: CHANGE BEFORE SUBMITTING
-        self.setWeights([3,3, 3,8,3])
+        #self.setWeights([3,3, 3,8,3])
         self.name =  "polarity invalid move you\'re player 2 ball is at did go west power "+self.heuristic
 
     def buildProtocol(self, addr):
