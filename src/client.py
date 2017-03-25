@@ -38,7 +38,7 @@ class HockeyClient(LineReceiver, object):
                 self.goal = 11
 
     def play_game(self):
-        result = move(self)
+        result = self.move()
         self.sendLine(result)
 
     def move(self):
