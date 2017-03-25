@@ -28,7 +28,7 @@ class StupidClient(HockeyClient):
                 return "north east"
             if self.Y == 10 and self.X > 0:
                 return "north west"
-            if self.Y > 10 and self.X > 0:
+            if self.Y < 10 and self.X > 0:
                 return "south west"
             if self.X == 0:
                 return "south"
