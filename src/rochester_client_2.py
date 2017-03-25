@@ -102,20 +102,20 @@ class UndoLegalMove(RuleEnforcer):
 
 class RochesterClient(HockeyClient):
     def __init__(self, name, debug):
-        size_x = 11
-        size_y = 11
+        size_x = 15
+        size_y = 15
         self.size_x = size_x
         self.size_y = size_y
         self.name = name
         self.debug = debug
-        self.X = 5
-        self.Y = 5
+        self.X = 7
+        self.Y = 7
         self.actions = []
         self.ball = int(round(math.ceil(size_x / 2.0) - 1, 0)), int(round(math.ceil(size_y / 2.0) - 1, 0))
         self.dots = BoardBuilder.init(self.size_x, self.size_y)
         self.dots[self.ball[0]][self.ball[1]]['bounce'] = True
         self.controller = RochesterController()
-        self.depth = 2
+        self.depth = 1
 
         self.debugcounter = 0
 
@@ -192,7 +192,7 @@ class RochesterClient(HockeyClient):
             if oldplayer != self.controller.active_player:
                 newdepth += 1
             #print('depths:', depth, newdepth)
-            rec = self.idrec(depth+1, self.controller.active_player)
+            actcopy, rec = self.idrec(depth+1, self.controller.active_player)
             if self.us != player:
                 if rec < best_heuristic:
                     best_heuristic = rec
@@ -204,7 +204,7 @@ class RochesterClient(HockeyClient):
             self.undo_move(action)
             #print('player check', oldplayer, self.controller.active_player)
             assert oldplayer == self.controller.active_player
-        #print('idrec returns', best_move, best_heuristic)
+        print('idrec returns', best_move, best_heuristic)
         return best_move, best_heuristic
 
 
@@ -215,14 +215,14 @@ class RochesterClient(HockeyClient):
             else:
                 return -100000
         # compute manhattan distance
-        dist = abs(self.controller.ball[0] - self.goal) + abs(self.controller.ball[1] - 5)
-        return 5 - dist
+        dist = abs(self.controller.ball[0] - 7) + abs(self.controller.ball[1] - self.goal)
+        return 7 - dist
 
 
 
 
 class RochesterController(Controller):
-    def __init__(self, size_x=11, size_y=11, builder=BoardBuilder, printer=BoardPrinterCurrent):
+    def __init__(self, size_x=15, size_y=15, builder=BoardBuilder, printer=BoardPrinterCurrent):
         self.actions = []
         self.ball = int(round(math.ceil(size_x / 2.0) - 1, 0)), int(round(math.ceil(size_y / 2.0) - 1, 0))
         self.size_x = size_x
@@ -260,7 +260,7 @@ class RochesterController(Controller):
         return next_rule
 
     def move(self, action):
-        #print('moving', action, self.actions, self.active_player)
+        #print('moving', action, self.ball)
         id = (self.active_player + 1) % 2
         action_result = self.rule_chain.process(action)
         if action_result.terminated:
@@ -273,7 +273,7 @@ class RochesterController(Controller):
             elif len(self.get_possible_actions(self.ball[0], self.ball[1])) == 0:
                 action_result.winner = self.players[id]
                 self.winner = self.players[id]
-        #print('actions: ', self.actions)
+        #print('moved: ', action, self.ball)
         return action_result
 
     def undo_move(self, action):
