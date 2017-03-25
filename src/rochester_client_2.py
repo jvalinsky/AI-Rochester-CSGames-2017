@@ -346,7 +346,7 @@ class RochesterClient(HockeyClient):
         for h, w in zip(self.heuristic_to_range.keys(), self.weights):
             if (self.heuristic_to_range[h] is None or self.heuristic_to_function[h] is None):
                 continue
-            value += (self.heuristic_to_function[h](self)/self.heuristic_to_range[h]) * w
+            value += (self.heuristic_to_function[h]()/self.heuristic_to_range[h]) * w
 
         return value
 
