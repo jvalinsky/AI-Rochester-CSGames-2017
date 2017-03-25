@@ -157,12 +157,14 @@ class RochesterClient(HockeyClient):
         self.heuristic_to_range = {
                 'eculidean': 10,
                 'manhattan': 22,
+                'diagonal': 25,
                 'possible_actions': 128,
         }
 
         self.heuristic_to_function = {
             'eculidean': self.eculidean_heuristic,
             'manhattan': self.manhattan_heuristic,
+            'diagonal': self.diagonal_heuristic,
             'possible_actions': self.possible_actions_heuristic,
         }
 
@@ -210,8 +212,8 @@ class RochesterClient(HockeyClient):
         #print(json.dumps(self.dots))
         assert obj_equals(self.dots, olddots)
         #print('consistency check', self.controller.ball, self.X, self.Y)
-        assert self.controller.ball[0] == self.X
-        assert self.controller.ball[1] == self.Y
+        #assert self.controller.ball[0] == self.X
+        #assert self.controller.ball[1] == self.Y
         self.lastMove = best_move
         self.triedPower = True
         if self.lastMoveInvalid:
@@ -288,7 +290,9 @@ class RochesterClient(HockeyClient):
             return self.diagonal_heuristic()
         elif self.heuristicType == "powerup":
             return self.powerup_heuristic()
-        elif self.heuristicType == "combine":
+        elif self.heuristicType == "possibleactions":
+            return self.possible_actions_heuristic()
+        elif self.heuristicType == "combined":
             return self.combine_heuristics()
         else:
             print('NO HEURISTIC...')
@@ -318,11 +322,11 @@ class RochesterClient(HockeyClient):
         x = posX
         y = posY
         num_actions = 0
-        actions = self.controller.get_possible_actions(self, posX, posY)
+        actions = self.controller.get_possible_actions(posX, posY)
         for action in actions:
-            x += string_to_diff[action]
-            y += string_to_diff[action]
-            num_actions += self.controller.get_possible_actions(self, x, y).length
+            x += string_to_diff[action][0]
+            y += string_to_diff[action][1]
+            num_actions += len(self.controller.get_possible_actions(x, y))
             x = posX
             y = posY
 
