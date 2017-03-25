@@ -38,6 +38,34 @@ def obj_equals(a, b):
         return True
     return a == b
 
+class ApplyLegalMove(RuleEnforcer):
+    def apply_rule(self, action):
+        self.controller.actions.append((self.controller.ball, self.controller.active_player, action))
+        ball_x, ball_y = self.controller.ball
+        x, y = self._get_ball_destination(action)
+        if not self.controller.dots[x][y]['bounce']:
+            self.controller._switch_player()
+
+        self.controller.ball = (x, y)
+
+        self.controller.dots[ball_x][ball_y]['actions'][action] = True
+        self.controller.dots[x][y]['actions'][self._opposite_action(action)] = True
+
+        self.controller.dots[x][y]['bounce'] = True
+        if self.controller.dots[x][y]['is_goal']:
+            result = ActionResults(self.controller.active_player_name(), terminated=True, reason="a goal was made")
+        else:
+            result = ActionResults(self.controller.active_player_name(), terminated=False)
+            if len(self.controller.get_possible_actions(x, y)) == 0:
+                self.controller._switch_player()
+                result = ActionResults(self.controller.active_player_name(), terminated=True,
+                                       reason="checkmate was achieved")
+        return result
+
+    def _opposite_action(self, action):
+        return Action.from_number((Action.to_number(action) + 4) % 8)
+
+
 class UndoLegalMove(RuleEnforcer):
     def __init__(self, controller, next_rule):
         self.controller = controller
@@ -101,7 +129,7 @@ class UndoLegalMove(RuleEnforcer):
 
 
 class RochesterClient(HockeyClient):
-    def __init__(self, name, debug):
+    def __init__(self, name, debug, heuristic="diagonal"):
         size_x = 15
         size_y = 15
         self.size_x = size_x
@@ -121,6 +149,7 @@ class RochesterClient(HockeyClient):
         self.powerupUsed = False
         self.havePowerup = False
         self.powerupCaptured = False
+        self.heuristicType = heuristic
 
         self.debugcounter = 0
 
@@ -138,7 +167,11 @@ class RochesterClient(HockeyClient):
 
     def move(self):
         #print('moving...', self.us, self.controller.active_player)
-        assert self.us == self.controller.active_player
+        #assert self.us == self.controller.active_player
+        # just in case, sometimes fails
+        if self.us != self.controller.active_player:
+            print('NOT ACTIVE PLAYER... STATE MAY HAVE BEEN CORRUPTED')
+            self.controller.active_player = self.us
         # iterative deepening 
         olddots = copy.deepcopy(self.dots)
         #print(json.dumps(olddots))
@@ -212,7 +245,13 @@ class RochesterClient(HockeyClient):
                 return 100000
             else:
                 return -100000
-        return self.manhattan_heuristic()
+        if self.heuristicType == "manhattan":
+            return self.manhattan_heuristic()
+        elif self.heuristicType == "diagonal":
+            return self.diagonal_heuristic()
+        else:
+            print('NO HEURISTIC...')
+            return 0
 
     def manhattan_heuristic(self):
         dist = abs(self.controller.ball[0] - 7) + abs(self.controller.ball[1] - self.goal)
@@ -221,7 +260,9 @@ class RochesterClient(HockeyClient):
     def diagonal_heuristic(self):
         diff1 = abs(self.controller.ball[0] - 7)
         diff2 = abs(self.controller.ball[1] - self.goal)
-        return 0
+        m = max(diff1, diff2)
+        d = abs(diff1 - diff2)
+        return m + d
 
 
 
@@ -305,19 +346,13 @@ class RochesterController(Controller):
         return acts
 
 class RochesterClientFactory(ClientFactory):
-    def __init__(self, debug):
-        self.name =  "Canadian Immigrants"
+    def __init__(self, debug, heuristic="diagonal"):
         self.debug = debug
+        self.heuristic = heuristic
+        # TODO: CHANGE BEFORE SUBMITTING
+        self.name =  "Canadian Immigrants"+self.heuristic
 
     def buildProtocol(self, addr):
-        return RochesterClient(self.name, self.debug)
+        return RochesterClient(self.name, self.debug, heuristic=self.heuristic)
 
 
-def main():
-    f = RochesterClientFactory(debug=True)
-    reactor.connectTCP("localhost", 8023, f)
-    reactor.run()
-
-
-if __name__ == "__main__":
-    main()
