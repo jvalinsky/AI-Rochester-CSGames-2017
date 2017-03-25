@@ -197,7 +197,7 @@ class RochesterClient(HockeyClient):
             self.undo_move(action)
             #print('player check', oldplayer, self.controller.active_player)
             assert oldplayer == self.controller.active_player
-        print('idrec returns', best_move, best_heuristic)
+        #print('idrec returns', best_move, best_heuristic)
         return best_move, best_heuristic
 
 
@@ -207,9 +207,16 @@ class RochesterClient(HockeyClient):
                 return 100000
             else:
                 return -100000
-        # compute manhattan distance
+        return self.manhattan_heuristic()
+
+    def manhattan_heuristic(self):
         dist = abs(self.controller.ball[0] - 7) + abs(self.controller.ball[1] - self.goal)
         return 7 - dist
+
+    def diagonal_heuristic(self):
+        diff1 = abs(self.controller.ball[0] - 7)
+        diff2 = abs(self.controller.ball[1] - self.goal)
+        return 0
 
 
 
