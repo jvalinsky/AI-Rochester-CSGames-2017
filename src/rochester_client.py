@@ -9,9 +9,8 @@ from hockey.action import Action
 from client import HockeyClient, ClientFactory
 
 class RochesterClient(HockeyClient):
-    def play_game(self):
-        result = Action.from_number(random.randint(0, 7))
-        self.sendLine(result)
+    def move(self):
+        return Action.from_number(random.randint(0, 7))
 
 class RochesterClientFactory(ClientFactory):
     def __init__(self, debug):
