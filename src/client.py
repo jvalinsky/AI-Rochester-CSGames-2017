@@ -22,8 +22,13 @@ class HockeyClient(LineReceiver, object):
     def __init__(self, name, debug):
         self.name = name
         self.debug = debug
-        self.X = 5
-        self.Y = 5
+        self.X = 7
+        self.Y = 7
+        self.powerX = -1
+        self.powerY = -1
+        self.powerupUsed = False
+        self.havePowerup = False
+        self.powerupCaptured = False
 
     def connectionMade(self):
         self.sendLine(self.name)
@@ -45,13 +50,18 @@ class HockeyClient(LineReceiver, object):
             nums = re.findall(r'\d+', line)
             self.X = int(nums[0])
             self.Y = int(nums[1])
+        elif 'power up is at' in line:
+            self.powerX = int(line.split(' ')[-4][1:-1])
+            self.powerY = int(line.split(' ')[-3][0:-1])
+        elif 'polarity' in line:
+            self.goal = 15 if self.goal == -1 else -1
         elif 'did go' in line:
             self.parse_didgo(line)
         elif 'your goal is' in line:
             if 'north' in line:
                 self.goal = -1
             else:
-                self.goal = 11
+                self.goal = 15
 
     def parse_didgo(self, line):
         sp = line.split(" ")
