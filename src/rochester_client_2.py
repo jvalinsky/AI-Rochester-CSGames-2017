@@ -170,7 +170,7 @@ class RochesterClient(HockeyClient):
             'powerup': self.powerup_heuristic,
         }
 
-        self.weights = [0 for x in range(len(self.heuristic_to_range.keys())]
+        self.weights = [1,1,1,1,1] 
 
         self.lastMove = None
         self.lastMoveInvalid = False
