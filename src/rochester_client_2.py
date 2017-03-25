@@ -8,6 +8,7 @@ from twisted.protocols.basic import LineReceiver
 
 from hockey.action import Action
 from hockey.controller import *
+from hockey2.controller_polarity import *
 
 from client import HockeyClient, ClientFactory
 
@@ -157,6 +158,10 @@ class RochesterClient(HockeyClient):
         super(RochesterClient, self).parse_didgo(line)
         self.apply_move(self.news)
 
+    def parsePowerUpAt(self, line):
+        super(RochesterClient, self).parsePowerUpAt(line)
+        self.controller.power_up_position = [self.powerX, self.powerY]
+
     def apply_move(self, action):
         move = self.controller.move(action)
         self.saved_active_player = self.controller.active_player
@@ -262,7 +267,7 @@ class RochesterClient(HockeyClient):
         diff2 = abs(self.controller.ball[1] - self.goal)
         m = max(diff1, diff2)
         d = abs(diff1 - diff2)
-        return m + d
+        return 7 - (m + d)
 
 
 
@@ -281,6 +286,8 @@ class RochesterController(Controller):
         self.active_player = 0
         self.terminated = False
         self.printer = printer()
+        self.power_up = None
+        self.power_up_position = [-1, -1]
 
         next_rule = self.rule()
 
@@ -306,9 +313,21 @@ class RochesterController(Controller):
         return next_rule
 
     def move(self, action):
+        power_up = True if "power" in action and self.power_up == self.active_player else False
+        if "power" in action:
+            action = action.split(' ')[1]
+        initial_active = self.active_player
         #print('moving', action, self.ball)
         id = (self.active_player + 1) % 2
         action_result = self.rule_chain.process(action)
+
+        if self.ball[0] == self.power_up_position[0] and self.ball[1] == self.power_up_position[1]:
+            self.power_up = initial_active
+
+        if power_up:
+            self.power_up = None
+            self.active_player = initial_active 
+
         if action_result.terminated:
             if self.ball[1] == self.goal_by_player[0]:
                 action_result.winner = self.players[0]

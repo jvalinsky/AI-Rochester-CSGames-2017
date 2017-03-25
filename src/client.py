@@ -51,8 +51,7 @@ class HockeyClient(LineReceiver, object):
             self.X = int(nums[0])
             self.Y = int(nums[1])
         elif 'power up is at' in line:
-            self.powerX = int(line.split(' ')[-4][1:-1])
-            self.powerY = int(line.split(' ')[-3][0:-1])
+            self.parsePowerUpAt(line)
         elif 'polarity of the goal has been inverted' in line:
             self.goal = 15 if self.goal == -1 else -1
         elif 'did go' in line:
@@ -62,6 +61,10 @@ class HockeyClient(LineReceiver, object):
                 self.goal = -1
             else:
                 self.goal = 15
+
+    def parsePowerUpAt(self, line):
+        self.powerX = int(line.split(' ')[-4][1:-1])
+        self.powerY = int(line.split(' ')[-3][0:-1])
 
     def parse_didgo(self, line):
         sp = line.split(" ")
