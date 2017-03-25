@@ -18,7 +18,7 @@ class StupidClientFactory(ClientFactory):
         self.debug = debug
 
     def buildProtocol(self, addr):
-        return RochesterClient(self.name, self.debug)
+        return StupidClient(self.name, self.debug)
 
 
 
