@@ -1,4 +1,4 @@
 #!/bin/bash
 
-python src/stupid_ai.py
+python src/rochester_ai.py
 

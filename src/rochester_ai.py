@@ -1,4 +1,4 @@
-from rochester_client import RochesterClientFactory
+from rochester_client_2 import RochesterClientFactory
 from twisted.internet import reactor
 
 f = RochesterClientFactory(debug=True)
