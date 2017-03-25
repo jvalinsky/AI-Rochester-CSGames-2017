@@ -41,7 +41,13 @@ class HockeyClient(LineReceiver, object):
         self.lastline = line
         if self.debug:
             print('Server said:', line)
-        if '{} is active player'.format(self.name) in line or 'invalid move' in line:
+        if '{} is active player'.format(self.name) in line: 
+            self.lastMoveInvalid = False
+            self.play_game()
+        elif 'invalid move' in line:
+            # TODO: remove
+            #assert False
+            self.lastMoveInvalid = True
             self.play_game()
         elif "you're player" in line:
             nums = re.findall(r'\d+', line)
