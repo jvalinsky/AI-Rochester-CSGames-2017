@@ -308,7 +308,6 @@ class RochesterClient(HockeyClient):
         return math.sqrt(abs(posX - 7) * abs(posX - 7) + abs(posY - self.goal)*abs(posY - self.goal))
 
 
-
     def possible_actions_heuristic(self):
         posX = self.controller.ball[0]
         posY = self.controller.ball[1]
@@ -329,6 +328,8 @@ class RochesterClient(HockeyClient):
     def combine_heuristics(self, heuristics, weights):
         value = 0
         for h, w in zip(heuristics, weights):
+            if (self.heuristic_to_range[n] is None or self.heuristic_to_function[h] is None):
+                continue
             value += (self.heuristic_to_function[h](self)/self.heuristic_to_range[h]) * w
 
         return value
