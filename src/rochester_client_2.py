@@ -159,6 +159,7 @@ class RochesterClient(HockeyClient):
                 'manhattan': 22,
                 'diagonal': 25,
                 'possible_actions': 128,
+                'powerup': 28, 
         }
 
         self.heuristic_to_function = {
@@ -166,6 +167,7 @@ class RochesterClient(HockeyClient):
             'manhattan': self.manhattan_heuristic,
             'diagonal': self.diagonal_heuristic,
             'possible_actions': self.possible_actions_heuristic,
+            'powerup': self.powerup_heuristic,
         }
 
         self.weights = [0 for x in range(len(self.heuristic_to_range.keys())]
