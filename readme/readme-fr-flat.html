@@ -1,0 +1,161 @@
+<p>Bienvenue à Silicon Valley.</p>
+<p>Ici, le jeu d'échec est obselète. Ainsi, les gens ont commencé à jouer à un nouveau jeu à un contre un...</p>
+<p>Ça s'appelle paper hockey.</p>
+<hr />
+<h1 id="paper-hockey">Paper Hockey</h1>
+<p>Paper Hockey est un jeu en tour par tour qui se déroule sur une grille de format <code>11x11</code>.</p>
+<p>Le jeu commence alors que la rondelle est au centre de la grille. L'objectif du jeu est d'amener la rondelle dans le filet de votre adversaire.</p>
+<p>Les buts sont aux limites nord et sud de la grille(voir l'image ci dessous)</p>
+<p><img src="images/empty_board.png" width="300"></p>
+<hr />
+<h2 id="regles">Règles:</h2>
+<ul>
+<li>À chaque tour, un joueur lance la rondelle dans une des 8 directions ((N, S, O, E et leurs diagonales))</li>
+<li>La rondelle ne peut emprunter deux fois la même ligne - une fois que la glace est brisée, il n'y a pas de retour en arrière.</li>
+<li>Lorsque la rondelle frappe une node déjà visitée ou un mur, elle rebondit, ce qui permet au joueur actif de faire un autre lancé.</li>
+<li>Vous avez 2 secondes pour faire votre lancé. Si vous échouez à faire votre lancé durant ce délai, vous perdez la partie.</li>
+<li>La partie est gagnée en faisant un but ou en forçant le joueur adverse à l'état d'échec et mat (voir la section <code>Échec et mat</code>)</li>
+</ul>
+<hr />
+<h2 id="exemple-de-but">Exemple de but</h2>
+<ol>
+<li>Joueur 1 (vert) lance au nord (vers le but dans lequel il doit marquer):</li>
+</ol>
+<p><img src="images/one.png" width="300" alt="vert nord"/></p>
+<hr />
+<ol>
+<li>Joueur 2 (rouge) lance au nord-est (un mouvement stupide):</li>
+</ol>
+<p><img src="images/two.png" width="300" alt="vert nord, rouge nord est"/></p>
+<hr />
+<ol>
+<li>Joueur 1 (vert) lance au nord.</li>
+<li>Joueur 2 (red) lance au nord-ouest.</li>
+<li>Joueur 1 (vert) lance au nord-ouest, atteint le mur, ce qui résulte en un <strong>rebond</strong>.</li>
+<li>Joueur 1 (vert) lance au nord-est, score un <strong>but</strong> et gagne la partie.</li>
+</ol>
+<p><img src="images/won.png" width="300" alt="vert nord, rouge nord est, vert nord, rouge nord ouest, vert nord ouest, vert nord est"></p>
+<p>Voici un récapitulatif de la partie:</p>
+<ul>
+<li>P1 - nord</li>
+<li>P2 - nord est</li>
+<li>P1 - nord</li>
+<li>P2 - nord ouest</li>
+<li>P1 - nord ouest [bounce]</li>
+<li>P1 - nord est</li>
+</ul>
+<hr />
+<h2 id="exemple-dun-rebondissement-epique">Exemple d'un rebondissement épique</h2>
+<p>Imaginons le scénario où les joueurs dessineraient un sapin en s'échangeant la rondelle.:</p>
+<p><img src="images/pine.gif" width="300"/></p>
+<hr />
+<p>Le joueur 2 a maintenant l'opportunité de terminer la partie en un seul tour en utilisant une série de rebonds sur des nodes déjà visitée et sur le mur:</p>
+<p><img src="images/pine_wild.gif" width="300"/></p>
+<p>Certains peuvent seulement espérer que le canadien de Montréal possède ce genre d'habiletés d'offensive.</p>
+<hr />
+<h2 id="exemple-echec-et-mat">Exemple Échec et mat</h2>
+<p>Dans ce jeu, le joueur 1 vient de lancer la rondelle vers le mur et doit rejouer (rebond). Puisque tous les segments qui sortent de cette node sont brisés, Joueur 1 ne peut faire de lancé valide et il perd par échec et mat.</p>
+<p><img src="images/check.gif" width="300" alt="vert nord ouest, rouge nord ouest, vert nord ouest, rouge nord ouest, vert nord ouest"/></p>
+<hr />
+<p>Ceci est un autre exemple d'échec et mat où le joueur 1 perd.</p>
+<p><img src="images/checkmate.gif" width="300"/></p>
+<hr />
+<h2 id="setup">Setup</h2>
+<p><i>Requis: Python &amp; tox</i></p>
+<h3 id="installation">Installation</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">tox</span> -e py27
+<span class="bu">source</span> .tox/py3/bin/activate</code></pre></div>
+<p>ou</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pip</span> install -r requirements.txt</code></pre></div>
+<hr />
+<h3 id="demarrer-le-serveur">Démarrer le serveur</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">python</span> src/server.py</code></pre></div>
+<h3 id="demarrer-un-ai-aleatoire">Démarrer un AI aléatoire</h3>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">source</span> .tox/py3/bin/activate
+<span class="ex">python</span> src/client.py</code></pre></div>
+<hr />
+<h2 id="par-ou-commencer">Par où commencer?</h2>
+<p>Pour jouer, il faut vous connecter sur localhost:8023.<br />
+Le protocole est text-based - vous pouvez même jouer à partir de telnet.</p>
+<p>Une fois connecté, la première chose que vous receverez est:</p>
+<pre><code>What&#39;s your name?</code></pre>
+<p>Vous devez répondre par votre nom d'équipe et recevoir cette confirmation:</p>
+<pre><code>Welcome, Bob you&#39;re Joueur 0!</code></pre>
+<hr />
+<p>Une fois que les deux joueurs se sont connectés à la partie, vous allez obtenir l'information suivante:</p>
+<ul>
+<li>position de la balle</li>
+<li>où se situe votre but</li>
+<li><p>{nom_du_joueur} is active Joueur [seulement si c'est votre tour]</p>
+<pre><code>Game is on - 1
+ball is at (5, 5) - 3
+your goal is north - 5
+Bob is active player - 7</code></pre></li>
+</ul>
+<hr />
+<h3 id="lances">Lancés</h3>
+<p>Lorsque vous êtes le joueur actif, vous pouvez envoyer une des commandes suivantes:</p>
+<pre><code>north
+north east
+east
+south east
+south
+south west
+west
+north west</code></pre>
+<hr />
+<p>Une fois qu'un lancé valide a été donné, le joueur 1 (Bob dans cette exemple) va recevoir:</p>
+<pre><code>south
+Bob did go south - 9</code></pre>
+<p>et le joueur 2 (Malory dans cet exemple) va recevoir:</p>
+<pre><code>Bob did go south - 8
+Malory is active player - 10</code></pre>
+<hr />
+<h3 id="rebond">Rebond</h3>
+<p>Le joueur qui rebondit sera informé par le message &quot;{nom_du_joueur} is active Joueur&quot;:</p>
+<pre><code>Bob did go north west - 15
+Malory is active player - 17
+east
+Malory did go east - 18
+Malory is active player - 20
+east
+Malory did go east - 22</code></pre>
+<hr />
+<h3 id="mouvement-invalide">Mouvement invalide</h3>
+<p>Si Malory essaie d'aller au Nord maintenant, elle recevra le message &quot;invalid move&quot;.</p>
+<p>Bob ne sera pas informé de ce mouvement invalide.</p>
+<pre><code>Bob did go south - 8
+Malory is active player - 10
+invalid move - 11</code></pre>
+<hr />
+<p>Si vous envoyez une action pendant que ce n'est pas votre tour vous receverez:</p>
+<pre><code>ignoring action south - 20</code></pre>
+<hr />
+<h3 id="gagner-la-partie">Gagner la partie</h3>
+<p>Voici le résultat lorsqu'un joueur gagne la partie:</p>
+<pre><code>Malory won a goal was made - 34</code></pre>
+<h3 id="replay">Replay</h3>
+<p>Vous pouvez consultez le replay de la partie dans le répertoire <i>test/output/</i>.</p>
+<hr />
+<h2 id="evaluation">Évaluation</h2>
+<ul>
+<li>Chaque AI va jouer jusqu'à 50000 parties (ou 10 minutes) contre chaque adversaire.</li>
+<li>Vous fournissez votre code source ainsi qu'un binaire exécutable. Assurez-vous d'avoir déclaré vos dépendancse de manière explicite.</li>
+<li>Votre AI n'aura pas accès à internet - désolé DeepMind.</li>
+<li>10% du pointage est donnée si vous avez un script bash &quot;run.sh&quot; qui démarre votre AI.</li>
+<li>90% du pointage est donnée en fonction de vos points dans le round robin.</li>
+</ul>
+<hr />
+<h3 id="pointage-detaille">Pointage détaillé</h3>
+<p>score = (team_count-position)/(team_count-1)</p>
+<p>Exemple s'il y a 30 équipes</p>
+<ul>
+<li>position == score</li>
+<li>1 == 90% maximum score</li>
+<li>2 == 87%</li>
+<li>3 == 84%</li>
+<li>4 == 81%</li>
+<li>5 == 78%</li>
+<li>6 == 74%</li>
+<li>7 == 71%</li>
+</ul>

@@ -21,11 +21,4 @@ class RochesterClientFactory(ClientFactory):
         return RochesterClient(self.name, self.debug)
 
 
-def main():
-    f = RochesterClientFactory(debug=True)
-    reactor.connectTCP("localhost", 8023, f)
-    reactor.run()
 
-
-if __name__ == "__main__":
-    main()
