@@ -11,29 +11,29 @@ from client import HockeyClient, ClientFactory
 class StupidClient(HockeyClient):
     def move(self):
         if self.goal == -1:
-            if self.X < 0 and self.Y < 0:
-                return Action.to_number("north east")
+            if self.X < 0 and self.Y > 0:
+                return "north east"
             if self.Y == 0 and self.X < 0:
-                return Action.to_number("south east")
+                return "south east"
             if self.Y == 0 and self.X > 0:
-                return Action.to_number("south west")
+                return "south west"
             if self.Y > 0 and self.X > 0:
-                return Action.to_number("north west")
+                return "north west"
             if self.X == 0:
-                return Action.to_number("north")
+                return "north"
         else:
             if self.X < 0 and self.Y < 10:
-                return Action.to_number("south east")
+                return "south east"
             if self.Y == 10 and self.X < 0:
-                return Action.to_number("north east")
+                return "north east"
             if self.Y == 10 and self.X > 0:
-                return Action.to_number("north west")
+                return "north west"
             if self.Y > 10 and self.X > 0:
-                return Action.to_number("south west")
+                return "south west"
             if self.X == 0:
-                return Action.to_number("south")
+                return "south"
 
-        return Action.to_number("south")
+        return "south"
 
 class StupidClientFactory(ClientFactory):
     def __init__(self, debug):
